@@ -8,7 +8,7 @@ import '../services/auth_service.dart';
 
 class CampaignController extends GetxController {
   final DatabaseService _databaseService = DatabaseService();
-  final AuthService _authService = AuthService();
+  // final AuthService _authService = AuthService();
 
   final RxList<CampaignModel> _campaigns = <CampaignModel>[].obs;
   final RxBool _isLoading = false.obs;
@@ -99,22 +99,23 @@ class CampaignController extends GetxController {
   }
 
   Future<bool> checkUserEligibility(String campaignId) async {
-    try {
-      final user = _authService.currentUser;
-      if (user == null) return false;
-
-      // Check if user has already submitted for this campaign
-      final submissions = await FirebaseFirestore.instance
-          .collection('reviewSubmissions')
-          .where('userId', isEqualTo: user.uid)
-          .where('campaignId', isEqualTo: campaignId)
-          .get();
-
-      return submissions.docs.isEmpty;
-    } catch (e) {
-      print('Error checking eligibility: $e');
-      return false;
-    }
+    return false;
+    // try {
+    //   final user = _authService.currentUser;
+    //   if (user == null) return false;
+    //
+    //   // Check if user has already submitted for this campaign
+    //   final submissions = await FirebaseFirestore.instance
+    //       .collection('reviewSubmissions')
+    //       .where('userId', isEqualTo: user.uid)
+    //       .where('campaignId', isEqualTo: campaignId)
+    //       .get();
+    //
+    //   return submissions.docs.isEmpty;
+    // } catch (e) {
+    //   print('Error checking eligibility: $e');
+    //   return false;
+    // }
   }
 
   List<CampaignModel> getCampaignsByPlatform(ReviewPlatform platform) {

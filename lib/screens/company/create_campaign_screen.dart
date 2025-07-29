@@ -1,4 +1,6 @@
 // lib/screens/company/create_campaign_screen.dart
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,8 +8,8 @@ import '../../controllers/company_campaign_controller.dart';
 import '../../controllers/payment_controller.dart';
 import '../../models/campaign_model.dart';
 import '../../widgets/custom_text_field.dart';
-import '../../widgets/custom_button.dart';
-import '../../widgets/platform_selector.dart';
+import '../../widgets/custom_button.dart' hide IconButton;
+import '../../widgets/platform_selector.dart' show PlatformSelector;
 
 class CreateCampaignScreen extends StatefulWidget {
   @override
@@ -111,7 +113,8 @@ class _CreateCampaignScreenState extends State<CreateCampaignScreen> {
                 hint: 'Link to your business page (Google Maps, Instagram profile, etc.)',
                 validator: (value) {
                   if (value?.isEmpty == true) return 'Business link is required';
-                  if (!Uri.tryParse(value!)?.hasAbsolutePath == true) {
+                  final uri = Uri.tryParse(value!);
+                  if (uri == null || !uri.hasAbsolutePath) {
                     return 'Please enter a valid URL';
                   }
                   return null;

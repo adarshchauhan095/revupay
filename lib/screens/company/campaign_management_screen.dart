@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/company_campaign_controller.dart';
+import '../../models/campaign_model.dart';
 import '../../widgets/company_campaign_card.dart';
 import 'review_approval_screen.dart';
 
