@@ -26,9 +26,9 @@ class StorageService extends GetxService {
     final users = [
       {
         'id': '1',
-        'email': 'company@test.com',
+        'email': 'company@gmail.com',
         'phone': '9876543210',
-        'password': 'company123',
+        'password': 'Yopmail@123',
         'role': 'company',
         'name': 'Test Company',
         'wallet': 0.0,
@@ -36,9 +36,9 @@ class StorageService extends GetxService {
       },
       {
         'id': '2',
-        'email': 'user@test.com',
+        'email': 'user@gmail.com',
         'phone': '9876543211',
-        'password': 'user123',
+        'password': 'Yopmail@123',
         'role': 'user',
         'name': 'Test User',
         'wallet': 0.0,
@@ -46,9 +46,9 @@ class StorageService extends GetxService {
       },
       {
         'id': '3',
-        'email': 'admin@test.com',
+        'email': 'admin@gmail.com',
         'phone': '9876543212',
-        'password': 'admin123',
+        'password': 'Yopmail@123',
         'role': 'admin',
         'name': 'Admin',
         'wallet': 0.0,
@@ -91,8 +91,8 @@ class StorageService extends GetxService {
 
     final users = List<Map<String, dynamic>>.from(_box.read('users') ?? []);
     userData['id'] = _generateId();
-    userData['createdAt'] = DateTime.now().toIso8601String();
-    userData['wallet'] = 0.0;
+    // userData['createdAt'] = DateTime.now().toIso8601String();
+    // userData['wallet'] = 0.0;
 
     users.add(userData);
     await _box.write('users', users);

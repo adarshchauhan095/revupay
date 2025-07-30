@@ -2,6 +2,7 @@
 // lib/app/modules/auth/views/login_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/auth_controller.dart';
 
 class LoginView extends GetView<AuthController> {
@@ -78,6 +79,14 @@ class LoginView extends GetView<AuthController> {
                   ),
                 )),
                 const SizedBox(height: 16),
+                Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Get.toNamed(Routes.REGISTER, arguments: role);
+                      },
+                      child: const Text("Don't have an account? Register here"),
+                    ),),
+                const SizedBox(height: 16),
                 Text(
                   'Test Credentials:\n${_getTestCredentials(role)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -109,11 +118,11 @@ class LoginView extends GetView<AuthController> {
   String _getTestCredentials(String role) {
     switch (role) {
       case 'company':
-        return 'Email: company@test.com\nPassword: any';
+        return 'Email: company@gmail.com\nPassword: Yopmail@123';
       case 'user':
-        return 'Email: user@test.com\nPassword: any';
+        return 'Email: user@gmail.com\nPassword: Yopmail@123';
       case 'admin':
-        return 'Email: admin@test.com\nPassword: any';
+        return 'Email: admin@gmail.com\nPassword: Yopmail@123';
       default:
         return '';
     }

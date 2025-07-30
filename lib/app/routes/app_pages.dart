@@ -3,6 +3,7 @@
 import 'package:get/get.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
+import '../modules/auth/views/register_view.dart';
 import '../modules/auth/views/role_selection_view.dart';
 import '../modules/company/bindings/company_binding.dart';
 import '../modules/company/bindings/user_controller_binding.dart';
@@ -27,6 +28,11 @@ class AppPages {
     GetPage(
       name: _Paths.LOGIN,
       page: () => LoginView(),
+      binding: AuthBinding(),
+    ),
+    GetPage(
+      name: _Paths.REGISTER,
+      page: () => RegisterView(),
       binding: AuthBinding(),
     ),
     GetPage(
