@@ -7,11 +7,11 @@ import '../modules/auth/views/register_view.dart';
 import '../modules/auth/views/role_selection_view.dart';
 import '../modules/company/bindings/company_binding.dart';
 import '../modules/company/bindings/user_controller_binding.dart';
-import '../modules/company/views/admin_dashboard_view.dart';
-import '../modules/company/views/campaign_detail_screen.dart';
+import '../modules/admin/views/admin_dashboard_view.dart';
+import '../modules/common/views/campaign_detail_screen.dart';
 import '../modules/company/views/company_dashboard_view.dart';
 import '../modules/company/views/create_campaign_view.dart';
-import '../modules/company/views/user_dashboard_view.dart';
+import '../modules/user/views/user_dashboard_view.dart';
 
 part 'app_routes.dart';
 

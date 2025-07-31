@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../data/models/campaign_model.dart';
 import '../../../routes/app_pages.dart';
 import '../../auth/controllers/auth_controller.dart';
-import '../controllers/user_controller.dart';
+import '../../company/controllers/user_controller.dart';
 
 class UserDashboardView extends GetView<UserController> {
   @override
