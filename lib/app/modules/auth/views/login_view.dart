@@ -27,74 +27,76 @@ class LoginView extends GetView<AuthController> {
           padding: const EdgeInsets.all(24.0),
           child: Form(
             key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  _getRoleIcon(role),
-                  size: 80,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(height: 32),
-                TextFormField(
-                  controller: _identifierController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email or Phone',
-                    prefixIcon: Icon(Icons.person),
-                    border: OutlineInputBorder(),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    _getRoleIcon(role),
+                    size: 80,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                  validator: (value) {
-                    if (value?.isEmpty == true) {
-                      return 'Please enter email or phone';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock),
-                    border: OutlineInputBorder(),
+                  const SizedBox(height: 32),
+                  TextFormField(
+                    controller: _identifierController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email or Phone',
+                      prefixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value?.isEmpty == true) {
+                        return 'Please enter email or phone';
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value?.isEmpty == true) {
-                      return 'Please enter password';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                Obx(() => SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: controller.isLoading.value
-                        ? null
-                        : () => _handleLogin(role),
-                    child: controller.isLoading.value
-                        ? const CircularProgressIndicator()
-                        : const Text('Login'),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Password',
+                      prefixIcon: Icon(Icons.lock),
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value?.isEmpty == true) {
+                        return 'Please enter password';
+                      }
+                      return null;
+                    },
                   ),
-                )),
-                const SizedBox(height: 16),
-                Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Get.toNamed(Routes.REGISTER, arguments: role);
-                      },
-                      child: const Text("Don't have an account? Register here"),
-                    ),),
-                const SizedBox(height: 16),
-                Text(
-                  'Test Credentials:\n${_getTestCredentials(role)}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  const SizedBox(height: 24),
+                  Obx(() => SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () => _handleLogin(role),
+                      child: controller.isLoading.value
+                          ? const CircularProgressIndicator()
+                          : const Text('Login'),
+                    ),
+                  )),
+                  const SizedBox(height: 16),
+                  Center(
+                      child: TextButton(
+                        onPressed: () {
+                          Get.toNamed(Routes.REGISTER, arguments: role);
+                        },
+                        child: const Text("Don't have an account? Register here"),
+                      ),),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Test Credentials:\n${_getTestCredentials(role)}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

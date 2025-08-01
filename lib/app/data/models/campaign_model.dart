@@ -13,6 +13,8 @@ class CampaignModel {
   final String status;
   final int reviewsSubmitted;
   final DateTime createdAt;
+  final double escrowAmount;
+  final double escrowUsed;
 
   CampaignModel({
     required this.id,
@@ -27,6 +29,8 @@ class CampaignModel {
     required this.status,
     required this.reviewsSubmitted,
     required this.createdAt,
+    required this.escrowAmount,
+    required this.escrowUsed,
   });
 
   factory CampaignModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +47,8 @@ class CampaignModel {
       status: json['status'] ?? 'active',
       reviewsSubmitted: json['reviewsSubmitted'] ?? 0,
       createdAt: DateTime.parse(json['createdAt']),
+      escrowAmount: (json['escrowAmount'] ?? 0.0).toDouble(),
+      escrowUsed: (json['escrowUsed'] ?? 0.0).toDouble(),
     );
   }
 
@@ -60,6 +66,8 @@ class CampaignModel {
       'status': status,
       'reviewsSubmitted': reviewsSubmitted,
       'createdAt': createdAt.toIso8601String(),
+      'escrowAmount': escrowAmount,
+      'escrowUsed': escrowUsed,
     };
   }
 }

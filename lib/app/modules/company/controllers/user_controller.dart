@@ -24,7 +24,8 @@ class UserController extends GetxController {
   Future<void> refreshData() async {
     isLoading.value = true;
     try {
-      campaigns.value = (await StorageService.to.getCampaigns())
+      campaigns.value = (await StorageService.to.getCampaigns(status: 'active',
+          funded: true ))
           .map((e) => CampaignModel.fromJson(e))
           .toList();
       reviews.value =

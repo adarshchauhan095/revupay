@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../data/services/storage_service.dart';
 import '../../../data/models/campaign_model.dart';
 import '../../../data/models/user_model.dart';
+import '../../../data/services/wallet_service.dart';
 
 class CompanyController extends GetxController {
   final isLoading = false.obs;
@@ -29,8 +30,12 @@ class CompanyController extends GetxController {
     try {
       final campaignData = await StorageService.to.getCampaigns(
         userId: currentUser.value?.id,
+        all: true, // Company sees all their campaigns
       );
       campaigns.value = campaignData.map((c) => CampaignModel.fromJson(c)).toList();
+
+      // Auto-expire campaigns
+      await _checkExpiredCampaigns();
     } catch (e) {
       Get.snackbar('Error', 'Failed to load campaigns');
     } finally {
@@ -53,6 +58,16 @@ class CompanyController extends GetxController {
       return false;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> _checkExpiredCampaigns() async {
+    final now = DateTime.now();
+    for (final campaign in campaigns) {
+      if (campaign.expiry.isBefore(now) && campaign.status == 'active') {
+        // Auto-refund expired campaigns
+        await WalletService.to.refundUnusedEscrow(campaign.id);
+      }
     }
   }
 }
