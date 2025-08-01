@@ -92,6 +92,11 @@ class StorageService extends GetxService {
     review['submittedAt'] = DateTime.now().toIso8601String();
     review['status'] = 'pending';
 
+    // Store image paths if provided
+    if (review['imagePaths'] != null) {
+      review['imagePaths'] = List<String>.from(review['imagePaths']);
+    }
+
     reviews.add(review);
     await _box.write('reviews', reviews);
 
