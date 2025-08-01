@@ -11,7 +11,7 @@ import 'app/routes/app_pages.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-  await GetStorage().erase();
+
   // Initialize services
   await Get.putAsync(() => StorageService().init());
   await Get.putAsync(() => WalletService().init());
@@ -27,9 +27,24 @@ class ReviewCampaignApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      initialRoute: AppPages.INITIAL,
+      initialRoute: _getInitialRoute(),
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     );
+  }
+
+  String _getInitialRoute() {
+    final currentUser = StorageService.to.getCurrentUser();
+    if (currentUser != null) {
+      switch (currentUser['role']) {
+        case 'company':
+          return Routes.COMPANY_DASHBOARD;
+        case 'user':
+          return Routes.USER_DASHBOARD;
+        case 'admin':
+          return Routes.ADMIN_DASHBOARD;
+      }
+    }
+    return Routes.ROLE_SELECTION;
   }
 }

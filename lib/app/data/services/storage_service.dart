@@ -17,9 +17,11 @@ class StorageService extends GetxService {
   }
 
   Future<void> _initializeData() async {
+    // Only seed data if no users exist (first time setup)
     if (_box.read('users') == null) {
       await _seedInitialData();
     }
+    // Remove the auto-erase to maintain persistent login
   }
 
   Future<void> _seedInitialData() async {
