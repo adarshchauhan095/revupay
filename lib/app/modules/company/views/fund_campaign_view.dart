@@ -1,6 +1,7 @@
 // lib/app/modules/company/views/fund_campaign_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../data/models/campaign_model.dart';
 import '../../../data/services/wallet_service.dart';
 import '../controllers/company_controller.dart';
@@ -9,6 +10,8 @@ class FundCampaignView extends StatelessWidget {
   final CampaignModel campaign = Get.arguments;
   final _selectedMethod = 'UPI'.obs;
   final _upiController = TextEditingController();
+
+  FundCampaignView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,37 +30,58 @@ class FundCampaignView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Campaign: ${campaign.title}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(
+                      'Campaign: ${campaign.title}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                     const SizedBox(height: 8),
-                    Text('₹${campaign.pricePerReview} × ${campaign.maxReviews} reviews'),
+                    Text(
+                      '₹${campaign.pricePerReview} × ${campaign.maxReviews} reviews',
+                    ),
                     const Divider(),
-                    Text('Total Amount: ₹${totalAmount.toStringAsFixed(2)}',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      'Total Amount: ₹${totalAmount.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            const Text('Payment Method', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text(
+              'Payment Method',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
-            Obx(() => Column(
-              children: ['UPI', 'Razorpay', 'GPay'].map((method) =>
-                  RadioListTile<String>(
-                    title: Text(method),
-                    value: method,
-                    groupValue: _selectedMethod.value,
-                    onChanged: (value) => _selectedMethod.value = value!,
-                  )
-              ).toList(),
-            )),
+            Obx(
+              () => Column(
+                children: ['UPI', 'Razorpay', 'GPay']
+                    .map(
+                      (method) => RadioListTile<String>(
+                        title: Text(method),
+                        value: method,
+                        groupValue: _selectedMethod.value,
+                        onChanged: (value) => _selectedMethod.value = value!,
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
             const SizedBox(height: 20),
             TextField(
               controller: _upiController,
               decoration: InputDecoration(
                 labelText: 'UPI ID / Payment Details',
                 border: const OutlineInputBorder(),
-                hintText: _selectedMethod.value == 'UPI' ? 'user@paytm' : 'Payment details',
+                hintText: _selectedMethod.value == 'UPI'
+                    ? 'user@paytm'
+                    : 'Payment details',
               ),
             ),
             const Spacer(),
@@ -80,15 +104,18 @@ class FundCampaignView extends StatelessWidget {
       return;
     }
 
-    Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
 
     // Simulate payment processing
     await Future.delayed(const Duration(seconds: 2));
 
     final success = await WalletService.to.fundCampaign(
-        campaign.companyId,
-        campaign.id,
-        amount
+      campaign.companyId,
+      campaign.id,
+      amount,
     );
 
     Get.back(); // Close loading

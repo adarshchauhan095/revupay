@@ -1,7 +1,7 @@
-
 // lib/app/modules/auth/views/login_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../routes/app_pages.dart';
 import '../controllers/auth_controller.dart';
 
@@ -9,6 +9,8 @@ class LoginView extends GetView<AuthController> {
   final _formKey = GlobalKey<FormState>();
   final _identifierController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -66,32 +68,40 @@ class LoginView extends GetView<AuthController> {
                       }
                       return null;
                     },
+                    onFieldSubmitted: (v) {
+                      _handleLogin(role);
+                    },
                   ),
                   const SizedBox(height: 24),
-                  Obx(() => SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: controller.isLoading.value
-                          ? null
-                          : () => _handleLogin(role),
-                      child: controller.isLoading.value
-                          ? const CircularProgressIndicator()
-                          : const Text('Login'),
+                  Obx(
+                    () => SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: controller.isLoading.value
+                            ? null
+                            : () => _handleLogin(role),
+                        child: controller.isLoading.value
+                            ? const CircularProgressIndicator()
+                            : const Text('Login'),
+                      ),
                     ),
-                  )),
+                  ),
                   const SizedBox(height: 16),
                   Center(
-                      child: TextButton(
-                        onPressed: () {
-                          Get.toNamed(Routes.REGISTER, arguments: role);
-                        },
-                        child: const Text("Don't have an account? Register here"),
-                      ),),
+                    child: TextButton(
+                      onPressed: () {
+                        Get.toNamed(Routes.REGISTER, arguments: role);
+                      },
+                      child: const Text("Don't have an account? Register here"),
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'Test Credentials:\n${_getTestCredentials(role)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
                     ),
                     textAlign: TextAlign.center,
                   ),

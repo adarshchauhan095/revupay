@@ -6,20 +6,26 @@ import 'package:get_storage/get_storage.dart';
 import 'app/core/theme/app_theme.dart';
 import 'app/data/services/storage_service.dart';
 import 'app/data/services/wallet_service.dart';
+import 'app/modules/auth/controllers/auth_controller.dart';
 import 'app/routes/app_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
 
-  // Initialize services
+  // Global/shared services and controllers
   await Get.putAsync(() => StorageService().init());
   await Get.putAsync(() => WalletService().init());
 
-  runApp(ReviewCampaignApp());
+  // Global bindings
+  Get.put(AuthController()); // Global auth controller
+
+  runApp(const ReviewCampaignApp());
 }
 
 class ReviewCampaignApp extends StatelessWidget {
+  const ReviewCampaignApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

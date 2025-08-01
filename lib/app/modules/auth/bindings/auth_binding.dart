@@ -1,6 +1,6 @@
-
-// lib/app/modules/auth/bindings/auth_binding.dart
+// lib/app/modules/auth/user_wallet/auth_binding.dart
 import 'package:get/get.dart';
+
 import '../controllers/auth_controller.dart';
 
 class AuthBinding extends Bindings {

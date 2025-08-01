@@ -1,122 +1,14 @@
-// lib/app/modules/common/views/campaign_detail_screen.dart - Updated sections only
+// lib/app/modules/campaign_detail/views/campaign_detail_screen.dart - Updated sections only
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import '../../../data/models/campaign_model.dart';
-import '../../../data/services/storage_service.dart';
-import '../widgets/fullscreen_image_viewer.dart';
 
-class CampaignDetailController extends GetxController {
-  late CampaignModel campaign;
-  final currentUser = Rxn<Map<String, dynamic>>();
-  final userReviews = <Map<String, dynamic>>[].obs;
-  final userNames = <String, String>{}.obs;
-  final isLoading = false.obs;
-  final selectedImages = <File>[].obs;
-  final ImagePicker _picker = ImagePicker();
+import '../controllers/campaign_detail_controller.dart';
 
-  @override
-  void onInit() {
-    super.onInit();
-    campaign = Get.arguments as CampaignModel;
-    currentUser.value = StorageService.to.getCurrentUser();
-    fetchUserReviews();
-  }
-
-  Future<void> fetchUserReviews() async {
-    isLoading.value = true;
-    try {
-      final user = currentUser.value;
-      if (user == null) return;
-
-      if (user['role'] == 'company') {
-        // Company sees all reviews for their campaign
-        userReviews.value = await StorageService.to.getReviews(campaignId: campaign.id);
-
-        // Fetch user names for company view
-        final users = await StorageService.to.getUsers();
-        userNames.clear();
-        for (var userData in users) {
-          userNames[userData['id']] = userData['name'] ?? 'Unknown User';
-        }
-      } else {
-        // User sees only their reviews
-        userReviews.value = await StorageService.to.getReviews(
-          campaignId: campaign.id,
-          userId: user['id'],
-        );
-      }
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  void openImageViewer(List<String> imagePaths, int initialIndex, String userName) {
-    Get.to(() => FullscreenImageViewer(
-      imagePaths: imagePaths,
-      initialIndex: initialIndex,
-      userName: userName,
-    ));
-  }
-
-  Future<void> pickImage(ImageSource source) async {
-    if (selectedImages.length >= 3) {
-      Get.snackbar('Limit Reached', 'Maximum 3 images allowed');
-      return;
-    }
-
-    final XFile? image = await _picker.pickImage(source: source);
-    if (image != null) {
-      selectedImages.add(File(image.path));
-    }
-  }
-
-  void removeImage(int index) {
-    selectedImages.removeAt(index);
-  }
-
-  Future<void> submitProof(String proofLink) async {
-    final user = currentUser.value;
-    if (user == null) return;
-
-    final review = {
-      'userId': user['id'],
-      'campaignId': campaign.id,
-      'proofLink': proofLink,
-      'imagePaths': selectedImages.map((img) => img.path).toList(),
-    };
-
-    final success = await StorageService.to.submitReview(review);
-    if (success) {
-      selectedImages.clear();
-      Get.snackbar('Success', 'Review submitted with proof images');
-      fetchUserReviews();
-    } else {
-      Get.snackbar('Error', 'Failed to submit');
-    }
-  }
-
-  // Existing methods remain unchanged...
-  Future<void> approveReview(String reviewId) async {
-    final success = await StorageService.to.updateReviewStatus(reviewId, 'approved');
-    if (success) {
-      Get.snackbar('Success', 'Review approved');
-      fetchUserReviews();
-    }
-  }
-
-  Future<void> rejectReview(String reviewId) async {
-    final success = await StorageService.to.updateReviewStatus(reviewId, 'rejected');
-    if (success) {
-      Get.snackbar('Success', 'Review rejected');
-      fetchUserReviews();
-    }
-  }
-}
-
-class CampaignDetailView extends StatelessWidget {
-  final CampaignDetailController controller = Get.put(CampaignDetailController());
+class CampaignDetailView extends GetView<CampaignDetailController> {
+  const CampaignDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +32,9 @@ class CampaignDetailView extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text('Platform: ${controller.campaign.platform}'),
                 Text('Business Link: ${controller.campaign.businessLink}'),
-                Text('Reward: ₹${controller.campaign.pricePerReview.toStringAsFixed(2)}'),
+                Text(
+                  'Reward: ₹${controller.campaign.pricePerReview.toStringAsFixed(2)}',
+                ),
                 const Divider(),
                 if (role == 'user') _buildUserActions(),
                 if (role == 'company') _buildCompanyActions(),
@@ -165,18 +59,22 @@ class CampaignDetailView extends StatelessWidget {
         const SizedBox(height: 12),
 
         // Image selection section
-        Text('Proof Images (Optional - Max 3):',
-            style: TextStyle(fontWeight: FontWeight.w600)),
+        const Text(
+          'Proof Images (Optional - Max 3):',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
 
-        Obx(() => Wrap(
-          spacing: 8,
-          children: [
-            ...controller.selectedImages.asMap().entries.map((entry) =>
-                Stack(
+        Obx(
+          () => Wrap(
+            spacing: 8,
+            children: [
+              ...controller.selectedImages.asMap().entries.map(
+                (entry) => Stack(
                   children: [
                     Container(
-                      width: 80, height: 80,
+                      width: 80,
+                      height: 80,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(8),
@@ -187,29 +85,42 @@ class CampaignDetailView extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      top: -8, right: -8,
+                      top: -8,
+                      right: -8,
                       child: IconButton(
-                        icon: const Icon(Icons.close, color: Colors.red, size: 20),
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.red,
+                          size: 20,
+                        ),
                         onPressed: () => controller.removeImage(entry.key),
                       ),
                     ),
                   ],
-                )
-            ),
-            if (controller.selectedImages.length < 3)
-              GestureDetector(
-                onTap: () => _showImagePicker(),
-                child: Container(
-                  width: 80, height: 80,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey, style: BorderStyle.solid),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.add_photo_alternate, color: Colors.grey),
                 ),
               ),
-          ],
-        )),
+              if (controller.selectedImages.length < 3)
+                GestureDetector(
+                  onTap: () => _showImagePicker(),
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey,
+                        style: BorderStyle.solid,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.add_photo_alternate,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
 
         const SizedBox(height: 12),
         ElevatedButton(
@@ -217,7 +128,7 @@ class CampaignDetailView extends StatelessWidget {
           child: const Text('Submit Review'),
         ),
         const SizedBox(height: 12),
-        Text('Your Submissions:'),
+        const Text('Your Submissions:'),
         ...controller.userReviews.map((r) => _ReviewSubmissionTile(r)),
       ],
     );
@@ -227,7 +138,7 @@ class CampaignDetailView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Reviews Submitted:'),
+        const Text('Reviews Submitted:'),
         ...controller.userReviews.map((r) => _CompanyReviewTile(r)),
       ],
     );
@@ -286,14 +197,21 @@ class _ReviewSubmissionTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Link: ${review['proofLink']}'),
-            Text('Status: ${review['status']}',
-                style: TextStyle(
-                  color: review['status'] == 'approved' ? Colors.green : Colors.orange,
-                  fontWeight: FontWeight.w600,
-                )),
+            Text(
+              'Status: ${review['status']}',
+              style: TextStyle(
+                color: review['status'] == 'approved'
+                    ? Colors.green
+                    : Colors.orange,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             if (imagePaths.isNotEmpty) ...[
               const SizedBox(height: 8),
-              Text('Proof Images:', style: TextStyle(fontWeight: FontWeight.w600)),
+              const Text(
+                'Proof Images:',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               const SizedBox(height: 4),
               SizedBox(
                 height: 60,
@@ -301,7 +219,8 @@ class _ReviewSubmissionTile extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: imagePaths.length,
                   itemBuilder: (context, index) => Container(
-                    width: 60, height: 60,
+                    width: 60,
+                    height: 60,
                     margin: const EdgeInsets.only(right: 8),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
@@ -309,9 +228,11 @@ class _ReviewSubmissionTile extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.file(File(imagePaths[index]), fit: BoxFit.cover,
+                      child: Image.file(
+                        File(imagePaths[index]),
+                        fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.broken_image, color: Colors.grey),
+                            const Icon(Icons.broken_image, color: Colors.grey),
                       ),
                     ),
                   ),
@@ -325,7 +246,7 @@ class _ReviewSubmissionTile extends StatelessWidget {
   }
 }
 
-// lib/app/modules/common/views/campaign_detail_screen.dart - Replace _CompanyReviewTile class only
+// lib/app/modules/campaign_detail/views/campaign_detail_screen.dart - Replace _CompanyReviewTile class only
 
 class _CompanyReviewTile extends StatelessWidget {
   final Map<String, dynamic> review;
@@ -346,34 +267,50 @@ class _CompanyReviewTile extends StatelessWidget {
             // User name header
             Row(
               children: [
-                Icon(Icons.person, size: 16, color: Colors.blue),
+                const Icon(Icons.person, size: 16, color: Colors.blue),
                 const SizedBox(width: 4),
-                Text(userName,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                Text(
+                  userName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
                 const Spacer(),
-                Text('User ID: ${review['userId']}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                Text(
+                  'User ID: ${review['userId']}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
               ],
             ),
             const SizedBox(height: 8),
 
             Text('Link: ${review['proofLink']}'),
-            Text('Status: ${review['status']}',
-                style: TextStyle(
-                  color: review['status'] == 'approved' ? Colors.green :
-                  review['status'] == 'rejected' ? Colors.red : Colors.orange,
-                  fontWeight: FontWeight.w600,
-                )),
+            Text(
+              'Status: ${review['status']}',
+              style: TextStyle(
+                color: review['status'] == 'approved'
+                    ? Colors.green
+                    : review['status'] == 'rejected'
+                    ? Colors.red
+                    : Colors.orange,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
 
             if (imagePaths.isNotEmpty) ...[
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Text('Proof Images (${imagePaths.length}):',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text(
+                    'Proof Images (${imagePaths.length}):',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   const SizedBox(width: 8),
-                  Text('• Tap to view full screen',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                  Text(
+                    '• Tap to view full screen',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
                 ],
               ),
               const SizedBox(height: 4),
@@ -383,9 +320,11 @@ class _CompanyReviewTile extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: imagePaths.length,
                   itemBuilder: (context, index) => GestureDetector(
-                    onTap: () => controller.openImageViewer(imagePaths, index, userName),
+                    onTap: () =>
+                        controller.openImageViewer(imagePaths, index, userName),
                     child: Container(
-                      width: 80, height: 80,
+                      width: 80,
+                      height: 80,
                       margin: const EdgeInsets.only(right: 8),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey),
@@ -395,21 +334,31 @@ class _CompanyReviewTile extends StatelessWidget {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.file(File(imagePaths[index]), fit: BoxFit.cover,
+                            child: Image.file(
+                              File(imagePaths[index]),
+                              fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.broken_image, color: Colors.grey),
+                                  const Icon(
+                                    Icons.broken_image,
+                                    color: Colors.grey,
+                                  ),
                             ),
                           ),
                           // Full screen indicator
                           Positioned(
-                            top: 4, right: 4,
+                            top: 4,
+                            right: 4,
                             child: Container(
                               padding: const EdgeInsets.all(2),
                               decoration: const BoxDecoration(
                                 color: Colors.black54,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.fullscreen, color: Colors.white, size: 12),
+                              child: const Icon(
+                                Icons.fullscreen,
+                                color: Colors.white,
+                                size: 12,
+                              ),
                             ),
                           ),
                         ],
@@ -428,7 +377,9 @@ class _CompanyReviewTile extends StatelessWidget {
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.check, size: 16),
                       label: const Text('Approve'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
                       onPressed: () => controller.approveReview(review['id']),
                     ),
                   ),
@@ -437,7 +388,9 @@ class _CompanyReviewTile extends StatelessWidget {
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.close, size: 16),
                       label: const Text('Reject'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
                       onPressed: () => controller.rejectReview(review['id']),
                     ),
                   ),

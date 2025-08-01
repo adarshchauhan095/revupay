@@ -1,9 +1,9 @@
-
 // lib/app/modules/company/controllers/company_controller.dart
 import 'package:get/get.dart';
-import '../../../data/services/storage_service.dart';
+
 import '../../../data/models/campaign_model.dart';
 import '../../../data/models/user_model.dart';
+import '../../../data/services/storage_service.dart';
 import '../../../data/services/wallet_service.dart';
 
 class CompanyController extends GetxController {
@@ -32,7 +32,9 @@ class CompanyController extends GetxController {
         userId: currentUser.value?.id,
         all: true, // Company sees all their campaigns
       );
-      campaigns.value = campaignData.map((c) => CampaignModel.fromJson(c)).toList();
+      campaigns.value = campaignData
+          .map((c) => CampaignModel.fromJson(c))
+          .toList();
 
       // Auto-expire campaigns
       await _checkExpiredCampaigns();

@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 import '../../../data/models/campaign_model.dart';
 import '../../../routes/app_pages.dart';
 import '../../auth/controllers/auth_controller.dart';
-import '../../company/controllers/admin_controller.dart';
+import '../controllers/admin_controller.dart';
 
 class AdminDashboardView extends GetView<AdminController> {
+  const AdminDashboardView({super.key});
+
   @override
   Widget build(BuildContext ctx) {
     Get.put(AdminController());
@@ -15,8 +17,9 @@ class AdminDashboardView extends GetView<AdminController> {
         title: const Text('Admin Dashboard'),
         actions: [
           IconButton(
-              onPressed: () => Get.find<AuthController>().logout(),
-              icon: const Icon(Icons.logout))
+            onPressed: () => Get.find<AuthController>().logout(),
+            icon: const Icon(Icons.logout),
+          ),
         ],
       ),
       body: RefreshIndicator(
@@ -30,21 +33,21 @@ class AdminDashboardView extends GetView<AdminController> {
             children: [
               _adminStats(ctx),
               const SizedBox(height: 20),
-              Text('Pending Reviews',
-                  style: Theme.of(ctx)
-                      .textTheme
-                      .headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'Pending Reviews',
+                style: Theme.of(ctx).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 8),
-              ...controller.pendingReviews
-                  .map((r) => _ReviewTile(r))
-                  .toList(),
+              ...controller.pendingReviews.map((r) => _ReviewTile(r)).toList(),
               const SizedBox(height: 20),
-              Text('All Campaigns',
-                  style: Theme.of(ctx)
-                      .textTheme
-                      .headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'All Campaigns',
+                style: Theme.of(ctx).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 8),
               ...controller.campaigns.map((c) => _campaignCard(c)).toList(),
             ],
@@ -59,10 +62,18 @@ class AdminDashboardView extends GetView<AdminController> {
   Widget _adminStats(BuildContext ctx) => Row(
     children: [
       _stat(ctx, 'Users', controller.users.length, Icons.people),
-      _stat(ctx, 'Campaigns', controller.campaigns.length,
-          Icons.campaign_rounded),
-      _stat(ctx, 'Pending', controller.pendingReviews.length,
-          Icons.hourglass_empty),
+      _stat(
+        ctx,
+        'Campaigns',
+        controller.campaigns.length,
+        Icons.campaign_rounded,
+      ),
+      _stat(
+        ctx,
+        'Pending',
+        controller.pendingReviews.length,
+        Icons.hourglass_empty,
+      ),
     ],
   );
 
@@ -70,11 +81,12 @@ class AdminDashboardView extends GetView<AdminController> {
     child: Card(
       child: ListTile(
         leading: Icon(i, color: Theme.of(ctx).colorScheme.primary),
-        title: Text('$v',
-            style: Theme.of(ctx)
-                .textTheme
-                .titleLarge
-                ?.copyWith(fontWeight: FontWeight.bold)),
+        title: Text(
+          '$v',
+          style: Theme.of(
+            ctx,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
         subtitle: Text(t),
       ),
     ),
@@ -84,16 +96,19 @@ class AdminDashboardView extends GetView<AdminController> {
     child: ListTile(
       title: Text('Review #${r["id"]} • ₹${r["earning"] ?? "?"}'),
       subtitle: Text('Campaign: ${r["campaignId"]} • User: ${r["userId"]}'),
-      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-        IconButton(
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
             icon: const Icon(Icons.check, color: Colors.green),
-            onPressed: () =>
-                controller.approve(r['id'] as String)),
-        IconButton(
+            onPressed: () => controller.approve(r['id'] as String),
+          ),
+          IconButton(
             icon: const Icon(Icons.close, color: Colors.red),
-            onPressed: () =>
-                controller.reject(r['id'] as String)),
-      ]),
+            onPressed: () => controller.reject(r['id'] as String),
+          ),
+        ],
+      ),
     ),
   );
 

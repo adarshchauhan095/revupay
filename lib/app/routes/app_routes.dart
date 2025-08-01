@@ -3,6 +3,7 @@ part of 'app_pages.dart';
 
 abstract class Routes {
   Routes._();
+
   static const ROLE_SELECTION = _Paths.ROLE_SELECTION;
   static const LOGIN = _Paths.LOGIN;
   static const REGISTER = _Paths.REGISTER;
@@ -11,13 +12,13 @@ abstract class Routes {
   static const FUND_CAMPAIGN = _Paths.FUND_CAMPAIGN;
   static const USER_DASHBOARD = _Paths.USER_DASHBOARD;
   static const USER_WALLET = _Paths.USER_WALLET;
-  static const COMPANY_WALLET = _Paths.COMPANY_WALLET;
   static const CAMPAIGN_DETAIL = _Paths.CAMPAIGN_DETAIL;
   static const ADMIN_DASHBOARD = _Paths.ADMIN_DASHBOARD;
 }
 
 abstract class _Paths {
   _Paths._();
+
   static const ROLE_SELECTION = '/role-selection';
   static const LOGIN = '/login';
   static const REGISTER = '/register';
@@ -26,7 +27,6 @@ abstract class _Paths {
   static const FUND_CAMPAIGN = '/fund-campaign';
   static const USER_DASHBOARD = '/user-dashboard';
   static const USER_WALLET = '/user-wallet';
-  static const COMPANY_WALLET = '/company-wallet';
   static const CAMPAIGN_DETAIL = '/campaign-detail';
   static const ADMIN_DASHBOARD = '/admin-dashboard';
 }

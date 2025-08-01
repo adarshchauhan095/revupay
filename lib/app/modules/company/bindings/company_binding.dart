@@ -1,6 +1,6 @@
-
-// lib/app/modules/company/bindings/company_binding.dart
+// lib/app/modules/company/user_wallet/company_binding.dart
 import 'package:get/get.dart';
+
 import '../controllers/company_controller.dart';
 
 class CompanyBinding extends Bindings {

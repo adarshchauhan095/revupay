@@ -1,7 +1,8 @@
-// lib/app/modules/common/widgets/fullscreen_image_viewer.dart
+// lib/app/modules/campaign_detail/widgets/fullscreen_image_viewer.dart
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:io';
 
 class FullscreenImageViewer extends StatefulWidget {
   final List<String> imagePaths;
@@ -9,11 +10,11 @@ class FullscreenImageViewer extends StatefulWidget {
   final String userName;
 
   const FullscreenImageViewer({
-    Key? key,
+    super.key,
     required this.imagePaths,
     required this.initialIndex,
     required this.userName,
-  }) : super(key: key);
+  });
 
   @override
   State<FullscreenImageViewer> createState() => _FullscreenImageViewerState();
@@ -56,8 +57,11 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                 child: Image.file(
                   File(widget.imagePaths[index]),
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.broken_image, color: Colors.white, size: 100),
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.broken_image,
+                    color: Colors.white,
+                    size: 100,
+                  ),
                 ),
               ),
             ),
@@ -78,7 +82,11 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.chevron_left, color: Colors.white, size: 32),
+                      icon: const Icon(
+                        Icons.chevron_left,
+                        color: Colors.white,
+                        size: 32,
+                      ),
                       onPressed: () => _pageController.previousPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
@@ -101,7 +109,11 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.chevron_right, color: Colors.white, size: 32),
+                      icon: const Icon(
+                        Icons.chevron_right,
+                        color: Colors.white,
+                        size: 32,
+                      ),
                       onPressed: () => _pageController.nextPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
@@ -122,13 +134,15 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   widget.imagePaths.length,
-                      (index) => Container(
+                  (index) => Container(
                     width: 8,
                     height: 8,
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: index == _currentIndex ? Colors.white : Colors.white54,
+                      color: index == _currentIndex
+                          ? Colors.white
+                          : Colors.white54,
                     ),
                   ),
                 ),

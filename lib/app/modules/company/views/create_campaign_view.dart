@@ -1,7 +1,7 @@
-
 // lib/app/modules/company/views/create_campaign_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../controllers/company_controller.dart';
 
 class CreateCampaignView extends GetView<CompanyController> {
@@ -14,12 +14,12 @@ class CreateCampaignView extends GetView<CompanyController> {
   final _expiryController = TextEditingController();
   final _selectedPlatform = 'Google'.obs;
 
+  CreateCampaignView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Campaign'),
-      ),
+      appBar: AppBar(title: const Text('Create Campaign')),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -63,23 +63,27 @@ class CreateCampaignView extends GetView<CompanyController> {
               const SizedBox(height: 16),
               Text(
                 'Platform Target *',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 8),
-              Obx(() => Wrap(
-                spacing: 8,
-                children: ['Google', 'Instagram', 'Facebook', 'Yelp'].map((platform) {
-                  return FilterChip(
-                    label: Text(platform),
-                    selected: _selectedPlatform.value == platform,
-                    onSelected: (selected) {
-                      if (selected) _selectedPlatform.value = platform;
-                    },
-                  );
-                }).toList(),
-              )),
+              Obx(
+                () => Wrap(
+                  spacing: 8,
+                  children: ['Google', 'Instagram', 'Facebook', 'Yelp'].map((
+                    platform,
+                  ) {
+                    return FilterChip(
+                      label: Text(platform),
+                      selected: _selectedPlatform.value == platform,
+                      onSelected: (selected) {
+                        if (selected) _selectedPlatform.value = platform;
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _businessLinkController,
@@ -89,7 +93,8 @@ class CreateCampaignView extends GetView<CompanyController> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
-                  if (value?.isEmpty == true) return 'Business link is required';
+                  if (value?.isEmpty == true)
+                    return 'Business link is required';
                   if (!GetUtils.isURL(value!)) return 'Enter a valid URL';
                   return null;
                 },
@@ -108,7 +113,8 @@ class CreateCampaignView extends GetView<CompanyController> {
                       ),
                       validator: (value) {
                         if (value?.isEmpty == true) return 'Price is required';
-                        if (double.tryParse(value!) == null) return 'Enter valid amount';
+                        if (double.tryParse(value!) == null)
+                          return 'Enter valid amount';
                         return null;
                       },
                     ),
@@ -123,8 +129,10 @@ class CreateCampaignView extends GetView<CompanyController> {
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
-                        if (value?.isEmpty == true) return 'Max reviews required';
-                        if (int.tryParse(value!) == null) return 'Enter valid number';
+                        if (value?.isEmpty == true)
+                          return 'Max reviews required';
+                        if (int.tryParse(value!) == null)
+                          return 'Enter valid number';
                         return null;
                       },
                     ),
@@ -148,15 +156,19 @@ class CreateCampaignView extends GetView<CompanyController> {
                 },
               ),
               const SizedBox(height: 32),
-              Obx(() => SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: controller.isLoading.value ? null : _createCampaign,
-                  child: controller.isLoading.value
-                      ? const CircularProgressIndicator()
-                      : const Text('Create Campaign'),
+              Obx(
+                () => SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: controller.isLoading.value
+                        ? null
+                        : _createCampaign,
+                    child: controller.isLoading.value
+                        ? const CircularProgressIndicator()
+                        : const Text('Create Campaign'),
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
         ),

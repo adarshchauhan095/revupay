@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../data/services/storage_service.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/auth_controller.dart';
@@ -12,6 +13,8 @@ class RegisterView extends GetView<AuthController> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  RegisterView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -77,20 +80,23 @@ class RegisterView extends GetView<AuthController> {
                       prefixIcon: Icon(Icons.lock),
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) => value!.isEmpty ? 'Enter password' : null,
+                    validator: (value) =>
+                        value!.isEmpty ? 'Enter password' : null,
                   ),
                   const SizedBox(height: 24),
-                  Obx(() => SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: controller.isLoading.value
-                          ? null
-                          : () => _handleRegister(role),
-                      child: controller.isLoading.value
-                          ? const CircularProgressIndicator()
-                          : const Text('Register'),
+                  Obx(
+                    () => SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: controller.isLoading.value
+                            ? null
+                            : () => _handleRegister(role),
+                        child: controller.isLoading.value
+                            ? const CircularProgressIndicator()
+                            : const Text('Register'),
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
@@ -125,7 +131,6 @@ class RegisterView extends GetView<AuthController> {
     }
   }
 }
-
 
 // lib/app/modules/auth/controllers/auth_controller.dart (ADDITIVE only)
 
